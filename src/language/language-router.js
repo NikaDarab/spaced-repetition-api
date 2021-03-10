@@ -87,34 +87,38 @@ languageRouter.route("/guess").post(bodyParser, async (req, res, next) => {
     newWordList.total_score++;
     newWordList.moveHead(newWordList.head.value.memory_value);
 
-    LanguageService.persistLL(req.app.get("db"), newWordList).then(() => {
-      res.json({
-        nextWord: newWordList.head.value.original,
-        wordCorrectCount: newWordList.head.value.correct_count,
-        wordIncorrectCount: newWordList.head.value.incorrect_count,
-        totalScore: newWordList.total_score,
-        answer: req.body.guess,
-        isCorrect: true,
-      });
-      next();
-    });
+    LanguageService.persistLL(req.app.get("db"), newWordList)
+      .then(() => {
+        res.json({
+          nextWord: newWordList.head.value.original,
+          wordCorrectCount: newWordList.head.value.correct_count,
+          wordIncorrectCount: newWordList.head.value.incorrect_count,
+          totalScore: newWordList.total_score,
+          answer: req.body.guess,
+          isCorrect: true,
+        });
+        // next();
+      })
+      .catch(next);
   } else {
     newWordList.head.value.incorrect_count++;
     newWordList.head.value.memory_value = 1;
     let correct = newWordList.head.value.translation;
     newWordList.moveHead(newWordList.head.value.memory_value);
 
-    LanguageService.persistLL(req.app.get("db"), newWordList).then(() => {
-      res.json({
-        nextWord: newWordList.head.value.original,
-        totalScore: newWordList.total_score,
-        wordCorrectCount: newWordList.head.value.correct_count,
-        wordIncorrectCount: newWordList.head.value.incorrect_count,
-        answer: correct,
-        isCorrect: false,
-      });
-      next();
-    });
+    LanguageService.persistLL(req.app.get("db"), newWordList)
+      .then(() => {
+        res.json({
+          nextWord: newWordList.head.value.original,
+          totalScore: newWordList.total_score,
+          wordCorrectCount: newWordList.head.value.correct_count,
+          wordIncorrectCount: newWordList.head.value.incorrect_count,
+          answer: correct,
+          isCorrect: false,
+        });
+        // next();
+      })
+      .catch(next);
   }
 });
 

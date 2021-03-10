@@ -86,6 +86,12 @@ const LanguageService = {
   },
 
   persistLL(db, lang) {
+    console.log(lang);
+    let node = lang.find((l) => l.value.id === lang.head.value.id);
+    while (node) {
+      node.value.next = node.next.value.id;
+      node = node.next;
+    }
     return db.transaction((trx) =>
       Promise.all([
         db("language").transacting(trx).where("id", lang.id).update({
